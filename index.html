@@ -1,0 +1,175 @@
+<html>
+  <head>
+    <title>Proc-gen Casserole</title>
+    
+    <link href="https://fonts.googleapis.com/css?family=Courgette|Open+Sans" rel="stylesheet">
+    
+    <style>
+      body {
+        background-color: #D9D9D9;
+        max-width: 800px;
+        margin: 2em auto !important;
+        float: none !important;
+        color: #312736;
+        font-family: 'Open Sans', sans-serif;
+      }
+      
+      h1, h2, h3, h4, h5, h6 {
+        font-family: 'Courgette', cursive;
+        font-size: 4em;
+        font-weight: normal;
+      }
+      
+      a:link, a:active, a:visited {
+        text-decoration: none;
+        color: #D4838F;
+      }
+
+      a:hover {
+        text-decoration: none;
+        color: #D6ABB1;
+      }
+
+      ul {
+        margin: 2em 0em;
+        padding: 0;
+      }
+
+      ul li {
+        list-style: none;
+        padding: .5em 0;
+        border-bottom: 1px solid #D6ABB1;
+      }
+    </style>
+    
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/seedrandom/2.4.3/seedrandom.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.10/handlebars.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    
+    <script id="template" type="text/x-handlebars-template">
+      <li>{{starch}}</li>
+      <li>{{protein}}</li>
+      <li>{{vegetable}}</li>
+      <li>{{sauce}}</li>
+      {{#each flavors}}
+        <li>{{this}}</li>
+      {{/each}}
+      {{#each toppings}}
+        <li>{{this}}</li>
+      {{/each}}
+    </script>
+    
+    <script>
+      function newSeed() {
+        Math.seedrandom();
+        window.location.hash = Math.random().toString(36).substr(2, 5);
+        window.location.reload();
+      }
+    
+      function regen() {
+        // set up stable seed on prng for hotlinking
+        if (!window.location.hash) {
+          Math.seedrandom();
+          window.location.hash = Math.random().toString(36).substr(2, 5);
+        }
+        
+        Math.seedrandom(window.location.hash);
+
+        function pick(arr) {
+          return arr[Math.floor(Math.random() * arr.length)];
+        }
+        
+        function pickMany(arr) {
+          var ret = [];
+          for (var i = 0; i < arr.length; i++) {
+            if (Math.random() < 0.5) {
+              ret.push(arr[i]);
+            }
+          }
+          
+          if (ret.length == 0) {
+            return [pick(arr)];
+          } else {
+            return ret;
+          }
+        }
+        
+        var starches = [
+          "2 cups uncooked pasta (macaroni, penne, spiral, bow tie), cooked",
+          "1 cup uncooked long-grain white or brown rice, cooked",
+          "4 cups uncooked noodles, cooked"
+        ];
+        
+        var proteins = [
+          "2 cups cooked ground beef",
+          "2 cups cooked and diced chicken",
+          "2 cups cooked and diced turkey",
+          "2 cups cooked and diced ham",
+          "2 cups cooked and diced beef",
+          "2 cups cooked and diced pork",
+          "2 cups chopped hard-cooked egg",
+          "2 (6 to 8-oz.) cans fish or seafood, flaked",
+          "2 cups cooked or canned dry beans (kidney, etc.)"
+        ];
+        
+        var vegetables = [
+          "1 (10-oz.) pkg. thawed and drained frozen spinach",
+          "1 (10-oz.) pkg. thawed and drained frozen broccoli",
+          "1 (10-oz.) pkg. thawed and drained frozen green beans",
+          "1 (10-oz.) pkg. thawed and drained frozen green peas",
+          "1 (16-oz.) can green beans, peas, carrots, corn, drained",
+          "2 cups sliced fresh zucchini"
+        ];
+        
+        var sauces = [
+          "2 cups white sauce",
+          "1 can sauce-type soup (mushroom, celery, cheese, tomato, etc.) mixed with milk to make 2 cups",
+          "1 (16-oz.) can diced tomatoes with juice"
+        ];
+        
+        var flavors = [
+          "1/2 cup chopped celery, 1/4 cup chopped onion, 1/4 cup sliced black olives",
+          "1 - 2 teaspoons mixed dried leaf herbs (basil, thyme, marjoram, tarragon)",
+          "Salt and pepper to taste"
+        ];
+        
+        var toppings = [
+          "2 tablespoons grated Parmesan cheese",
+          "1/4 cup shredded Swiss, Cheddar, or Monterey Jack cheese",
+          "1/4 cup buttered bread crumbs",
+          "1/4 to 1/2 cup canned fried onion rings"
+        ];
+        
+        $("#recipe").html(Handlebars.compile($("#template").html())({
+          starch: pick(starches),
+          protein: pick(proteins),
+          vegetable: pick(vegetables),
+          sauce: pick(sauces),
+          flavors: pickMany(flavors),
+          toppings: pickMany(toppings)
+        }))
+      }
+      
+      window.onpopstate = regen;
+      
+      $(function() {
+        regen();
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Proc-gen Casserole</h1>
+
+    <p>Makes 6 servings</p>
+
+    <ul id="recipe"></ul>
+        
+    <p>Combine ingredients in a buttered 2 to 2 1/2 quart casserole dish.</p>
+    <p>Cover and bake at 350&deg;F for about 50 minutes to 1 hour or microwave using 50% power for about 15 to 30 minutes, rotating or stirring as necessary.</p>
+    <p>Heat until steaming hot (165&deg;F) throughout.</p>
+    
+    <p>Return casserole with topping(s), uncovered, to oven for about 10 minutes or to microwave for about 2 minutes.</p>
+    
+    <a href='javascript:newSeed();'>New Seed</a>
+  </body>
+</html>

@@ -1,2 +1,4 @@
 # casserole
-Proc-gen Casserole
+I wanted to be able to Proc-gen Casseroles for personal use.
+
+casserole.paper-plane.io
